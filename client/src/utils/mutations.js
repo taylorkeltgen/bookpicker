@@ -25,27 +25,26 @@ export const ADD_USER = gql`
 `;
 
 export const SAVE_BOOK = gql`
-  mutation addFriend($id: ID!) {
-    addFriend(friendId: $id) {
-      _id
+  mutation saveBook($bookInfo: BookInfo!) {
+    saveBook(bookInfo: $bookInfo) {
       username
-      friendCount
-      friends {
-        _id
-        username
+      email
+      bookCount
+      savedBooks {
+        bookId
       }
     }
   }
 `;
 
 export const REMOVE_BOOK = gql`
-  mutation removeFriend($id: ID!) {
-    removeFriend(id: $id) {
-      _id
+  mutation removeBook($bookInfo: BookInfo!) {
+    removeBook(bookInfo: $bookInfo) {
       username
-      friends {
-        _id
-        username
+      email
+      bookCount
+      savedBooks {
+        bookId
       }
     }
   }

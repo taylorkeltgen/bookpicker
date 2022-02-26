@@ -8,7 +8,7 @@ import { removeBookId } from '../utils/localStorage';
 import { useQuery } from '@apollo/client';
 import { GET_ME } from '../utils/queries';
 
-const { data: userData } = useQuery(GET_ME);
+// const { data: userData } = useQuery(GET_ME);
 
 const SavedBooks = () => {
   const [userData, setUserData] = useState({});
