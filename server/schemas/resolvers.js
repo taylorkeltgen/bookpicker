@@ -22,12 +22,6 @@ const resolvers = {
     user: async (parent, { username }) => {
       return User.findOne({ username }).select('-__v -password');
     },
-    books: async () => {
-      return Book.find();
-    },
-    book: async (parent, { _id }) => {
-      return Book.findOne({ _id });
-    },
   },
 
   Mutation: {
@@ -43,28 +37,30 @@ const resolvers = {
       if (!user) {
         throw new AuthenticationError('Incorrect credentials');
       }
-
       const correctPw = await user.isCorrectPassword(password);
 
       if (!correctPw) {
         throw new AuthenticationError('Incorrect credentials');
       }
-
       const token = signToken(user);
       return { token, user };
     },
-    saveBook: async (parent, arg, context) => {
+
+    saveBook: async (parent, { book }, context) => {
       if (context.user) {
-        const book = await Book.findOne({ ...args, username: context.user.username });
-        const book = await User.findByIdAndUpdate({ _id: context.user._id }, { $addToSet: { savedBooks: book._id } }, { new: true });
-        return book;
+        const updatedUser = await User.findOneAndUpdate({ _id: context.user._id }, { $addToSet: { savedBooks: book } }, { new: true }).populate(
+          'savedBooks'
+        );
+        return updatedUser;
       }
       throw new AuthenticationError('You need to be logged in!');
     },
-    removeBook: async (parent, arg, context) => {
+    removeBook: async (parent, { book }, context) => {
       if (context.user) {
-        const updatedBookList = await User.findByIdAndUpdate({ _id: context.user._id }, { $pull: { savedBooks: book._id } }, { new: true });
-        return updatedBookList;
+        const updatedUser = await User.findOneAndUpdate({ _id: context.user._id }, { $pull: { savedBooks: book } }, { new: true }).populate(
+          'savedBooks'
+        );
+        return updatedUser;
       }
       throw new AuthenticationError('You need to be logged in!');
     },
